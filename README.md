@@ -4,6 +4,7 @@ Store and track changes to source code and any other document generated during t
 Change History
 
 10/8/2018
+
 Domain Model Document uploaded
 
 Use Case Documentation udpated based on feedback (changed sections are highlighted in Green)
