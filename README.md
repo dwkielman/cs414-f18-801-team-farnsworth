@@ -5,4 +5,5 @@ Change History
 
 10/8/2018
 Domain Model Document uploaded
-Use Case Documentation udpated based on feedback
+
+Use Case Documentation udpated based on feedback (changed sections are highlighted in Green)
