@@ -35,7 +35,8 @@ Gym Demo Video Link
 Other updates in this include:
   Reoragnization of some of the folders on Github. Now using folder to hold relevant documents for those submissions and their updates (need to figure out how to move documents on Github to place old versions in there too without deleting)
   
-  Domain Model Document was updated based on feedback (changed sections are highlighted in Green). Notable changes include:
+  Domain Model Document was updated based on feedback (changed sections are highlighted in Green). Notable changes include the following.
+  
     Renaming of certain classes to avoid confusion (e.g. Class has become WorkoutClass, Set has become WorkoutSet)
     
     Organization of Glossary in alphabetical order to follow Standards.
