@@ -2,11 +2,12 @@ package teamFarnsworth.Application.Controllers;
 
 import java.util.Set;
 
-import teamFarnsworth.Domain.GymHours;
-import teamFarnsworth.Domain.Person;
-import teamFarnsworth.Domain.Qualification;
-import teamFarnsworth.Domain.Trainer;
-import teamFarnsworth.Handlers.MemberHandler;
+import teamFarnsworth.Domain.Entities.GymHours;
+import teamFarnsworth.Domain.Users.Customer;
+import teamFarnsworth.Domain.Users.Person;
+import teamFarnsworth.Domain.Users.Qualification;
+import teamFarnsworth.Domain.Users.Trainer;
+import teamFarnsworth.Handlers.UserHandlers.MemberHandler;
 
 public class TrainerController implements UserController<Trainer> {
 	
@@ -85,6 +86,18 @@ public class TrainerController implements UserController<Trainer> {
 			if (trainer.equals(t)) {
 				t.addQualification(q);
 			}
+		}
+	}
+	
+	public void enrollCustomerWithTrainer(Trainer t, Customer c) {
+			t.addCustomerToTrainer(c);
+			c.enrollWithTrainer(t);
+	}
+	
+	public void unenrollCustomerFromTrainer(Trainer t, Customer c) {
+		if (t.getCustomers().contains(c)) {
+			t.removeCustomer(c);
+			c.unenrollFromTrainer();
 		}
 	}
 	

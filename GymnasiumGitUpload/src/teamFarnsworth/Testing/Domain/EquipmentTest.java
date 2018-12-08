@@ -6,13 +6,14 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import teamFarnsworth.Domain.Equipment;
+import teamFarnsworth.Domain.Entities.Equipment;
 
 public class EquipmentTest {
 
 	private Equipment e1;
 	private Equipment e2;
 	private Equipment e3;
+	private Equipment nullEquipment;
 	
 	private String n1 = "name1";
 	private String pp1 = "path1";
@@ -40,12 +41,52 @@ public class EquipmentTest {
 	void testEquipmentNotEqual() {
 		assertFalse(e1.equals(e2));
 	}
+	
+	@Test
+	void testEquipmentNull() {
+		assertTrue(nullEquipment == null);
+	}
  
 	@Test
-	void testEquipmentUpdateQuantity() {
+	void testEquipmentAddMoreQuantity() {
 		assertTrue(e1.getQuantity() == 1);
-		e1.updateQuantity(4);
+		e1.addMoreQuantity(4);
 		assertTrue(e1.getQuantity() == 5);
+	}
+	
+	@Test
+	void testEquipmentAddMoreQuantityWithNegativeNumber() {
+		assertTrue(e1.getQuantity() == 1);
+		e1.addMoreQuantity(-1);
+		assertTrue(e1.getQuantity() == 1);
+	}
+	
+	@Test
+	void testEquipmentAddMoreQuantityWithZero() {
+		assertTrue(e1.getQuantity() == 1);
+		e1.addMoreQuantity(0);
+		assertTrue(e1.getQuantity() == 1);
+	}
+	
+	@Test
+	void testEquipmentSetQuantity() {
+		assertTrue(e1.getQuantity() == 1);
+		e1.setQuantity(2);
+		assertTrue(e1.getQuantity() == 2);
+	}
+	
+	@Test
+	void testEquipmentSetQuantityWithNegativeNumber() {
+		assertTrue(e1.getQuantity() == 1);
+		e1.setQuantity(-1);
+		assertTrue(e1.getQuantity() == 1);
+	}
+	
+	@Test
+	void testEquipmentSetQuantityWithZero() {
+		assertTrue(e1.getQuantity() == 1);
+		e1.setQuantity(0);
+		assertTrue(e1.getQuantity() == 1);
 	}
 
 }

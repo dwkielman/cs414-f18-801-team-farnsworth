@@ -7,10 +7,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import teamFarnsworth.Application.Accessors.PersonFactory;
-import teamFarnsworth.Domain.Customer;
-import teamFarnsworth.Domain.Manager;
-import teamFarnsworth.Domain.Person;
-import teamFarnsworth.Domain.Trainer;
+import teamFarnsworth.Domain.Users.Customer;
+import teamFarnsworth.Domain.Users.Manager;
+import teamFarnsworth.Domain.Users.Person;
+import teamFarnsworth.Domain.Users.Trainer;
 
 public class PersonFactoryTest {
 	

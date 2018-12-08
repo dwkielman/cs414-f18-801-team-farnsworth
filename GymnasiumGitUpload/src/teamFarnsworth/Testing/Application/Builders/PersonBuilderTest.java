@@ -7,16 +7,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import teamFarnsworth.Application.Builders.PersonBuilder;
-import teamFarnsworth.Domain.Address;
-import teamFarnsworth.Domain.HealthInsuranceProvider;
-import teamFarnsworth.Domain.Password;
-import teamFarnsworth.Domain.Person;
+import teamFarnsworth.Domain.Users.Address;
+import teamFarnsworth.Domain.Users.HealthInsuranceProvider;
+import teamFarnsworth.Domain.Users.Password;
+import teamFarnsworth.Domain.Users.Person;
 
 public class PersonBuilderTest {
 
 	private String validFirstName = "validFirst";
 	private String validLastName = "validLast";
-	private int validPhone = 1234567891;
+	private String validPhone = "1234567891";
 	private String validEmail = "valid@email.com";
 	private String validIDMan = "validManagerID";
 	private String validIDTrainer = "validTrainerID";

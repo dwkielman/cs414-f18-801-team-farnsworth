@@ -1,16 +1,16 @@
 package teamFarnsworth.Application.Builders;
 
 import teamFarnsworth.Application.Accessors.PersonFactory;
-import teamFarnsworth.Domain.Address;
-import teamFarnsworth.Domain.HealthInsuranceProvider;
-import teamFarnsworth.Domain.Password;
-import teamFarnsworth.Domain.Person;
+import teamFarnsworth.Domain.Users.Address;
+import teamFarnsworth.Domain.Users.HealthInsuranceProvider;
+import teamFarnsworth.Domain.Users.Password;
+import teamFarnsworth.Domain.Users.Person;
 
 public class PersonBuilder {
 	
 	private String firstName;
 	private String lastName;
-	private int phone;
+	private String phone;
 	private String email;
 	private String ID;
 	private Address address;
@@ -25,7 +25,7 @@ public class PersonBuilder {
 		this.lastName = name;
 		return lastName;
 	}
-	public int addPhone(int number) {
+	public String addPhone(String number) {
 		this.phone = number;
 		return phone;
 	}
@@ -64,7 +64,7 @@ public class PersonBuilder {
 		if (lastName != null) {
 			person.setLastName(lastName);
 		}
-		if (phone > 0) {
+		if (phone != null) {
 			person.setPhone(phone);
 		}
 		if (email != null) {

@@ -2,9 +2,9 @@ package teamFarnsworth.Application.Controllers;
 
 import java.util.*;
 
-import teamFarnsworth.Domain.Routine;
-import teamFarnsworth.Domain.Exercise;
-import teamFarnsworth.Handlers.RoutineHandler;
+import teamFarnsworth.Domain.Entities.Exercise;
+import teamFarnsworth.Domain.Entities.Routine;
+import teamFarnsworth.Handlers.EntityHandlers.RoutineHandler;
 
 public class RoutineController {
 
@@ -16,15 +16,6 @@ private RoutineHandler routineHandler;
 	
 	public Set<Routine> getRoutines(){
 		return routineHandler.getRoutines();
-	}
-	public Routine getRoutine(String name, Exercise e){
-		Routine routine = new Routine(name, e);
-		for (Routine r : routineHandler.getRoutines()){
-			if (r.equals(routine)){
-				return r;
-			}
-		}
-		return null;
 	}
 	
 	public Routine getRoutine(Routine r){
@@ -50,10 +41,13 @@ private RoutineHandler routineHandler;
 	}
 	
 	public void addExerciseToRoutine(String name, Exercise e){
-		for (Routine r : routineHandler.getRoutines()){
-			if (r.getName().equals(name)){
+		for (Routine r : routineHandler.getRoutines()){	
+			
+			if (r.getName().equals(name)){	
 				if (!r.getExercises().contains(e)) {
-					r.addExercise(e);;
+					System.out.println(r.getExercises());
+					r.addExercise(e);
+					System.out.println(r.getExercises());
 				}
 			}
 		}
@@ -74,6 +68,11 @@ private RoutineHandler routineHandler;
 		String returnString = "";
 		for (Routine r : routineHandler.getRoutines()){
 			returnString += r.toString() + "\n";
+			if (r.getExercises().size() > 0) {
+				for (Exercise e : r.getExercises()) {
+					returnString += e.toString();
+				}
+			}
 		}
 		return returnString;
 	}

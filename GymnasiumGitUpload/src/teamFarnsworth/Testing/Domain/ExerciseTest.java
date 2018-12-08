@@ -6,16 +6,17 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import teamFarnsworth.Domain.Duration;
-import teamFarnsworth.Domain.Equipment;
-import teamFarnsworth.Domain.Exercise;
-import teamFarnsworth.Domain.WorkoutSet;
+import teamFarnsworth.Domain.Entities.Duration;
+import teamFarnsworth.Domain.Entities.Equipment;
+import teamFarnsworth.Domain.Entities.Exercise;
+import teamFarnsworth.Domain.Entities.WorkoutSet;
 
 public class ExerciseTest {
 
 	private Exercise ex1;
 	private Exercise ex2;
 	private Exercise ex3;
+	private Exercise nullExercise;
 	
 	private String n1 = "ex1";
 	private String n2 = "ex2";
@@ -43,6 +44,11 @@ public class ExerciseTest {
 	@Test
 	void testExerciseNotEqual() {
 		assertFalse(ex1.equals(ex2));
+	}
+	
+	@Test
+	void testExerciseNull() {
+		assertTrue(nullExercise == null);
 	}
 	
  

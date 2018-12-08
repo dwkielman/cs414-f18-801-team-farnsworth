@@ -2,9 +2,9 @@ package teamFarnsworth.Application.Controllers;
 
 import java.util.Set;
 
-import teamFarnsworth.Domain.Manager;
-import teamFarnsworth.Domain.Person;
-import teamFarnsworth.Handlers.MemberHandler;
+import teamFarnsworth.Domain.Users.Manager;
+import teamFarnsworth.Domain.Users.Person;
+import teamFarnsworth.Handlers.UserHandlers.MemberHandler;
 
 public class ManagerController implements UserController<Manager> {
 	

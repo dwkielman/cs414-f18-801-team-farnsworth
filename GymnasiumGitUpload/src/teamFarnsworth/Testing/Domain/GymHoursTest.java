@@ -8,7 +8,7 @@ import java.time.LocalTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import teamFarnsworth.Domain.GymHours;
+import teamFarnsworth.Domain.Entities.GymHours;
 
 public class GymHoursTest {
 
@@ -41,6 +41,18 @@ public class GymHoursTest {
 	@Test
 	void testGymHoursNotEqual() {
 		assertFalse(gh1.equals(gh2));
+	}
+	
+	@Test
+	void testSetStartTimeToAfterEndTime() {
+		gh1.setStartTime(LocalTime.of(3, 0));
+		assertTrue(gh1.getStartTime().equals(st1));
+	}
+	
+	@Test
+	void testSetEndTimeToBeforeStartTime() {
+		gh2.setEndTime(LocalTime.of(6, 30));
+		assertTrue(gh2.getEndTime().equals(et2));
 	}
 
 }

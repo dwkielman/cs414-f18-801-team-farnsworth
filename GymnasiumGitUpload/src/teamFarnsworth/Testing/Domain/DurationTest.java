@@ -6,7 +6,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import teamFarnsworth.Domain.Duration;
+import teamFarnsworth.Domain.Entities.Duration;
 
 public class DurationTest {
 
@@ -16,6 +16,7 @@ public class DurationTest {
 	private int num1 = 1;
 	private int num2 = 2;
 	private int num3 = 1;
+	private Duration nullDuration;
 	
 	
 	@BeforeEach
@@ -33,6 +34,11 @@ public class DurationTest {
 	@Test
 	void testDurationNotEqual() {
 		assertFalse(d1.equals(d2));
+	}
+	
+	@Test
+	void testDurationNull() {
+		assertTrue(nullDuration == null);
 	}
 
 }

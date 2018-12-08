@@ -2,10 +2,10 @@ package teamFarnsworth.Application.Controllers;
 
 import java.util.*;
 
-import teamFarnsworth.Domain.Customer;
-import teamFarnsworth.Domain.GymHours;
-import teamFarnsworth.Domain.WorkoutClass;
-import teamFarnsworth.Handlers.WorkoutClassHandler;
+import teamFarnsworth.Domain.Entities.GymHours;
+import teamFarnsworth.Domain.Entities.WorkoutClass;
+import teamFarnsworth.Domain.Users.Customer;
+import teamFarnsworth.Handlers.EntityHandlers.WorkoutClassHandler;
 
 public class WorkoutClassController {
 
@@ -47,12 +47,9 @@ public class WorkoutClassController {
 	public String toStringWorkoutClasses(){
 		String returnString = "";
 		
-		for (WorkoutClass workoutClass : workoutClassHandler.getWorkoutClasses()){
-
-			//System.out.println(workoutClass.toString());
-			returnString += workoutClass.toString() + "\n";
+		for (WorkoutClass workoutClass : workoutClassHandler.getWorkoutClasses()) {
+			returnString += (workoutClass.toString()) + "\n";
 		}
-		System.out.println(returnString);
 		return returnString;
 	}
 	

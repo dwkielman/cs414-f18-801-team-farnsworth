@@ -2,8 +2,8 @@ package teamFarnsworth.Application.Controllers;
 
 import java.util.*;
 
-import teamFarnsworth.Domain.Equipment;
-import teamFarnsworth.Handlers.EquipmentHandler;
+import teamFarnsworth.Domain.Entities.Equipment;
+import teamFarnsworth.Handlers.EntityHandlers.EquipmentHandler;
 
 public class EquipmentController {
 

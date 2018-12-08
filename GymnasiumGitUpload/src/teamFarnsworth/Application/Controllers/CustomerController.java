@@ -2,10 +2,10 @@ package teamFarnsworth.Application.Controllers;
 
 import java.util.Set;
 
-import teamFarnsworth.Domain.Customer;
-import teamFarnsworth.Domain.Membership;
-import teamFarnsworth.Domain.Person;
-import teamFarnsworth.Handlers.MemberHandler;
+import teamFarnsworth.Domain.Users.Customer;
+import teamFarnsworth.Domain.Users.Membership;
+import teamFarnsworth.Domain.Users.Person;
+import teamFarnsworth.Handlers.UserHandlers.MemberHandler;
 
 public class CustomerController implements UserController<Customer> {
 
@@ -83,8 +83,4 @@ public class CustomerController implements UserController<Customer> {
 			}
 		}
 	}
-	
-	
-	
-	
 }

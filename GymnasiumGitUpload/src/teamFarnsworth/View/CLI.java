@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
-import teamFarnsworth.Application.Builders.PersonBuilder;
 import teamFarnsworth.Application.Controllers.CustomerController;
 import teamFarnsworth.Application.Controllers.EquipmentController;
 import teamFarnsworth.Application.Controllers.ExerciseController;
@@ -17,49 +16,35 @@ import teamFarnsworth.Application.Controllers.TrainerController;
 import teamFarnsworth.Application.Controllers.UserController;
 import teamFarnsworth.Application.Controllers.UserControllerFactory;
 import teamFarnsworth.Application.Controllers.WorkoutClassController;
-import teamFarnsworth.Domain.Address;
-import teamFarnsworth.Domain.Customer;
-import teamFarnsworth.Domain.Duration;
-import teamFarnsworth.Domain.Equipment;
-import teamFarnsworth.Domain.Exercise;
-import teamFarnsworth.Domain.GymHours;
-import teamFarnsworth.Domain.HealthInsuranceProvider;
-import teamFarnsworth.Domain.Membership;
-import teamFarnsworth.Domain.Password;
-import teamFarnsworth.Domain.Person;
-import teamFarnsworth.Domain.Qualification;
-import teamFarnsworth.Domain.Routine;
-import teamFarnsworth.Domain.Trainer;
-import teamFarnsworth.Domain.WorkoutClass;
-import teamFarnsworth.Handlers.LoginHandler;
+import teamFarnsworth.Domain.Entities.Duration;
+import teamFarnsworth.Domain.Entities.Equipment;
+import teamFarnsworth.Domain.Entities.Exercise;
+import teamFarnsworth.Domain.Entities.GymHours;
+import teamFarnsworth.Domain.Entities.Routine;
+import teamFarnsworth.Domain.Entities.WorkoutClass;
+import teamFarnsworth.Domain.Entities.WorkoutSet;
+import teamFarnsworth.Domain.Users.Customer;
+import teamFarnsworth.Domain.Users.HealthInsuranceProvider;
+import teamFarnsworth.Domain.Users.Membership;
+import teamFarnsworth.Domain.Users.Password;
+import teamFarnsworth.Domain.Users.Person;
+import teamFarnsworth.Domain.Users.Qualification;
+import teamFarnsworth.Domain.Users.Trainer;
+import teamFarnsworth.Handlers.SystemHandlers.LoginHandler;
 
 public class CLI {
 
 	private static Scanner scanner = new Scanner(System.in);
-	private static TrainerController trainerController;
-	private static CustomerController customerController;
+	static TrainerController trainerController;
+	static CustomerController customerController;
 	private static ManagerController managerController;
-	private static EquipmentController equipmentController;
-	private static ExerciseController exerciseController;
-	private static RoutineController routineController;
-	private static WorkoutClassController workoutClassController;
-	private static LoginHandler loginHandler;
+	static EquipmentController equipmentController;
+	static ExerciseController exerciseController;
+	static RoutineController routineController;
+	static WorkoutClassController workoutClassController;
+	static LoginHandler loginHandler;
 	
-	private static String currentUserId;
-	
-	/**
-	 * Hardcode Login for Debugging
-	 */
-	public static void hardCodedUsers() {
-		loginHandler.setAccountInSystem("admin", new Password("pass"));
-		loginHandler.linkAccountType("admin", "Admin");
-		loginHandler.setAccountInSystem("man", new Password("pass"));
-		loginHandler.linkAccountType("man", "Manager");
-		loginHandler.setAccountInSystem("train", new Password("pass"));
-		loginHandler.linkAccountType("train", "Trainer");
-		loginHandler.setAccountInSystem("cus", new Password("pass"));
-		loginHandler.linkAccountType("cus", "Customer");
-	}
+	static String currentUserId;
 	
 	/**
 	 * Login View
@@ -73,9 +58,9 @@ public class CLI {
 			currentUserId = ID;
 			switch (loginHandler.getAccountType(ID)) {
 				case ("Admin"): adminScreen(); break;
-				case ("Manager"): managerScreen(); break;
-				case ("Trainer"): trainerScreen(); break;
-				case ("Customer"): customerScreen(); break;
+				case ("Manager"): CLIUserScreens.managerScreen(); break;
+				case ("Trainer"): CLIUserScreens.trainerScreen(); break;
+				case ("Customer"): CLIUserScreens.customerScreen(); break;
 			}
 		}
 		System.out.println("Goodbye");
@@ -96,96 +81,15 @@ public class CLI {
 		switch (answer) {
 			case 1: 
 				loginHandler.linkAccountType("admin", "Manager");
-				managerScreen(); break;
+				CLIUserScreens.managerScreen(); break;
 			case 2: 
 				loginHandler.linkAccountType("admin", "Trainer");
-				trainerScreen(); break;
+				CLIUserScreens.trainerScreen(); break;
 			case 3: 
 				loginHandler.linkAccountType("admin", "Customer");
-				customerScreen(); break;
+				CLIUserScreens.customerScreen(); break;
 			case 4: return;
 		}
-	}
-	
-	// Manager Main Screen
-	public static void managerScreen() {
-		System.out.println("[1] Manage Trainers\n" + 
-				"[2] Manage Customers\n" +
-				"[3] Manage Equipment\n" + 
-				"[4] Logout\n"
-				);
-		int answer = getIntSelection(1, 4);
-		switch (answer) {
-			case 1: managePerson("Trainer"); break;
-			case 2: managePerson("Customer"); break;
-			case 3: manageEquipmentScreen(); break;
-			case 4: return;
-		}
-		managerScreen();
-	}
-	
-	// Trainer Main Screen
-	public static void trainerScreen() {
-		System.out.println("[1] View Schedule\n" + 
-				"[2] Manage Customers\n" + 
-				"[3] Manage Classes\n" +
-				"[4] Manage Routines\n" + 
-				"[5] Manage Exercises\n" + 
-				"[6] Logout\n"
-				);
-		int answer = getIntSelection(1, 6);
-		switch (answer) {
-			case 1: trainerScheduleScreen(); break;
-			case 2: managePerson("Customer"); break;
-			case 3: manageWorkoutClassesScreen(); break;
-			case 4: manageRoutineScreen(); break;
-			case 5: manageExerciseScreen(); break;
-			case 6: return;
-		}
-		trainerScreen();
-	}
-	
-	// Customer Main Screen
-	public static void customerScreen() {
-		System.out.println("[1] View All Classes\n" + 
-				"[2] View Enrolled Classes\n" + 
-				"[3] Manage Classes\n" +
-				"[4] Logout\n"
-				);
-		int answer = getIntSelection(1, 4);
-		switch (answer) {
-			case 1: 
-				workoutClassController.toStringWorkoutClasses();
-				break;
-			case 2: customerClassesScreen(); break;
-			case 3: customerManageClasses(); break;
-			case 4: return;
-		}
-		customerScreen();
-	}
-	
-	// Manage Trainers or Customers, including adding new Users and Modifying current ones
-	// only accessible to Trainers and Managers
-	public static void managePerson(String accountType) {
-		String option1 = "";
-		
-		if (accountType == "Trainer") {
-			option1 = "Hire";
-		}
-		if (accountType == "Customer") {
-			option1 = "Register";
-		}
-		System.out.println("[1] " + option1 + " " + accountType + "\n" + 
-				"[2] Modify " + accountType + "\n" + 
-				"[3] Return to Previous Screen\n" 
-				);
-		int answer = getIntSelection(1, 3);
-		switch (answer) {
-		case 1: createUser(accountType); break;
-		case 2: modifyUserScreen(accountType); break;
-		case 3: return;
-		}
-		managePerson(accountType);
 	}
 	
 	// Trainer's Schedule
@@ -195,94 +99,10 @@ public class CLI {
 			for (GymHours gh : t.getSchedule()) {
 				System.out.println(gh.toString());
 			}
-		}
-		
-	}
-	
-	// Customer's Workout Class Schedule
-	public static void customerClassesScreen() {
-		Customer c = customerController.getUser(currentUserId);
-		if (!c.getEnrolledClasses().isEmpty()) {
-			System.out.println(c.workoutClassesToString());
 		} else {
-			System.out.println("You are currently not enrolled in any classes");
+			System.out.println("You are currently not scheduled to teach any classes.");
 		}
 		
-	}
-	
-	/**
-	 * Gym Entities Views
-	 */
-	// Main Equipment Selections Screen, only accessible by Managers
-	public static void manageEquipmentScreen() {
-		System.out.println("[1] Display All Equipment\n" + 
-				"[2] Add Equipment\n" + 
-				"[3] Modify Equipment\n" +
-				"[4] Return\n"
-				);
-		int answer = getIntSelection(1, 4);
-		switch (answer) {
-			case 1: System.out.println(equipmentController.toStringEquipment());
-				break;
-			case 2: createEquipment(""); break;
-			case 3: modifyEquipment(); break;
-			case 4: return;
-		}
-		manageEquipmentScreen();
-	}
-	
-	// Main Routine Selections Screen
-	public static void manageRoutineScreen() {
-		System.out.println("[1] Display All Routines\n" + 
-				"[2] Add Routine\n" + 
-				"[3] Modify Routine\n" +
-				"[4] Return\n"
-				);
-		int answer = getIntSelection(1, 4);
-		switch (answer) {
-			case 1: System.out.println(routineController.toStringRoutines());
-				break;
-			case 2: createRoutine(); break;
-			case 3: modifyRoutine(); break;
-			case 4: return;
-		}
-		manageRoutineScreen();
-	}
-		
-	// Main Workout classes Selections Screen, only accessible by Trainers
-	public static void manageWorkoutClassesScreen() {
-		System.out.println("[1] Display All Classes\n" + 
-				"[2] Add Class\n" + 
-				"[3] Modify Class\n" +
-				"[4] Return\n"
-				);
-		int answer = getIntSelection(1, 4);
-		switch (answer) {
-			case 1: System.out.println(workoutClassController.toStringWorkoutClasses());
-				break;
-			case 2: createWorkoutClass(""); break;
-			case 3: modifyWorkoutClass(); break;
-			case 4: return;
-		}
-		manageWorkoutClassesScreen();
-	}
-	
-	// Main Exercise Selections Screen
-	public static void manageExerciseScreen() {
-		System.out.println("[1] Display All Exercises\n" + 
-				"[2] Add Exercise\n" + 
-				"[3] Modify Exercise\n" +
-				"[4] Return\n"
-				);
-		int answer = getIntSelection(1, 4);
-		switch (answer) {
-			case 1: System.out.println(exerciseController.toStringExercises());
-				break;
-			case 2: createExercise(); break;
-			case 3: modifyExercise(); break;
-			case 4: return;
-		}
-		manageExerciseScreen();
 	}
 	
 	//
@@ -300,235 +120,6 @@ public class CLI {
 		customerManageClasses();
 	}
 
-	/*
-	 * User Creation Views
-	 */
-	// Creates a new Trainer or Customer, only accessible by Managers or Trainers
-	public static void createUser(String accountType) {
-		Person person = createPerson(accountType);
-		
-		if (person == null) {
-			return;
-		}
-		
-		// Creating a Trainer and adding it to the global Trainer Controller
-		if (person.getClass().equals(Trainer.class)) {
-			Trainer t = trainerController.addUser(person);
-			boolean enterQualifications = getBooleanInput("Add Qualifications Now? (Y or N): ", "Please Enter a Valid Selection");
-			while (enterQualifications) {
-				Qualification q = new Qualification(getString("Enter Qualification: ", "Please Enter a Valid Qualification"));
-				trainerController.addQualification(t, q);
-				enterQualifications = getBooleanInput("Add Additional Qualification? (Y or N): ", "Please Enter a Valid Selection");
-			}
-			
-			boolean enterHours = getBooleanInput("Add Work Hours Now? (Y or N): ", "Please Enter a Valid Selection");
-			while (enterHours) {
-				GymHours gh = addTimeEntry();
-				if (gh != null) {
-					trainerController.setSchedule(t, gh);
-				}
-				enterHours = getBooleanInput("Add More Work Hours? (Y or N): ", "Please Enter a Valid Selection");
-			}
-			// Creating a Customer and adding it to the global Customer Controller
-		} else if (person.getClass().equals(Customer.class)) {
-			Customer c = customerController.addUser(person);
-			Membership m = Membership.INACTIVE;
-			boolean isActive = getBooleanInput("Is Customer Active? (Y or N): ", "Please Enter a Valid Selection");
-			if (isActive) {
-				m = Membership.ACTIVE;
-			}
-			customerController.setMembershipStatus(c, m);
-		}
-		
-		System.out.println("User " + person.getID() + " has successfully been created.\n");
-	}
-	
-	// Creating an actual Person Class that is for use by all User Types that share same Person attributes
-	public static Person createPerson(String accountType) {
-		PersonBuilder personBuilder = new PersonBuilder();
-		
-		personBuilder.addFirstName(getString("Enter First Name: ", "Please Enter a Valid Name"));
-		personBuilder.addLastName(getString("Enter Last Name: ", "Please Enter a Valid Name"));
-		
-		personBuilder.addPhone(getInt("Enter 10-digit Phone Number: ", "Please Enter a Valid Phone Number"));
-		
-		personBuilder.addEmail(getString("Enter an Email Address: ", "Please Enter a Valid Email Address"));
-		personBuilder.addID(getString("Enter an ID: ", "Please Enter a Valid ID"));
-		
-		personBuilder.addPassword(getString("Enter a Password: ", "Please Enter a Valid ID"));
-		
-		String street = getString("Enter a Street: ", "Please Enter a Valid Street");
-		String city = getString("Enter a City: ", "Please Enter a Valid City");
-		String state = getString("Enter a State: ", "Please Enter a Valid State");
-		int zip = getInt("Enter 5-digit Zip Code: ", "Please Enter a Valid Zip Code");
-		
-		personBuilder.addAddress(street, city, state, zip);
-		boolean enterHeatlthInsruance = getBooleanInput("Add Health Insurance Provider Now? (Y or N): ", "Please Enter a Valid Selection");
-		if (enterHeatlthInsruance) {
-			personBuilder.addHealthInsuranceProvider(getString("Enter a Health Insurance Provider Name: ", "Please Enter a Valid Health Insurance Provider"));
-		}
-		
-		Person p = personBuilder.BuildPerson(accountType);
-		
-		loginHandler.setAccountInSystem(p.getID(), p.getPassword());
-		loginHandler.linkAccountType(p.getID(), accountType);
-		return p;
-	}
-	
-	/*
-	 * Gym Entities Creation Views
-	 */
-	// Creates a new Equipment, only accessible by Managers
-	public static void createEquipment(String name) {
-		if (name == "") {
-			name = getString("Enter Name of Equipment: ", "Please Enter a Valid Name");
-		}
-		Equipment e = new Equipment(name);
-		boolean enterPhoto = getBooleanInput("Are you adding a Photo Right Now? (Y or N): ", "Please Enter a Valid Selection");
-		if (enterPhoto) {
-			String picturePath = getString("Enter File Location of Picture of Equipment): ", "Please Enter a Valid File Location");
-			e.setPicturePath(picturePath);
-		}
-		boolean enterQuantity = getBooleanInput("Are you adding more than 1 of this Equipment? (Y or N): ", "Please Enter a Valid Selection");
-		if (enterQuantity) {
-			int qty = getInt("Enter the Quantity of this Equipment in Stock: ", "Please Enter a Valid Zip Code");
-			e.setQuantity(qty);
-		}
-		
-		if (!equipmentController.getAllEquipment().contains(e)) {
-			equipmentController.addEquipment(e);
-			System.out.println("Equipment " + e.getName() + " Has been Added to the Gym");
-		} else {
-			System.out.println("This Equipment already exists.");
-			boolean updateQuantity = getBooleanInput("Would you like to update the Quantity of this Existing Equipment? (Y or N): ", "Please Enter a Valid Selection");
-			if (updateQuantity) {
-				equipmentController.getEquipment(name).updateQuantity(e.getQuantity());
-				System.out.println("Equipment " + e.getName() + "Has been Updated");
-			} else {
-				System.out.println("Please select this Equipment through the Modify Equipment Selection to Modify it.");
-			}
-		}
-	}
-	
-	// Creates a new Routine, only accessible by Trainers
-	public static void createRoutine() {
-		String name = getString("Enter Name of Routine: ", "Please Enter a Valid Name");
-		System.out.println("Here are the Exercises currently available to use in your Routine");
-		exerciseController.toStringExercises();
-		boolean addNewExercise = getBooleanInput("Do you need to add a new Exercise for your Routine? (Y or N): ", "Please Enter a Valid Selection");
-		if (addNewExercise) {
-			createExercise();
-		} else {
-			boolean addExercise = true;
-			while (addExercise) {
-				
-				Map<Integer, Exercise> exerciseMap = new HashMap<Integer, Exercise>();
-				Set<Exercise> allExercises = exerciseController.getExercises();
-				System.out.println("Select the Number of the Corresponding Exercise to add to Routine: ");
-				int index = 1;
-				for (Exercise exer : allExercises) {
-					System.out.println("[" + index + "] " + exer.toString());
-					exerciseMap.put(index, exer);
-					index++;
-				}
-				System.out.println("[" + index + "] Return to Previous Screen");
-				int answer = getIntSelection(1, index);
-				
-				if (answer >= 1 && answer < index) {
-					Exercise routineExericse = exerciseMap.get(answer);
-					Routine r = new Routine(name, routineExericse);
-					if (routineController.getRoutines().contains(r)) {
-						for (Routine rou : routineController.getRoutines()) {
-							if (rou.getExercises().contains(routineExericse)) {
-								boolean addExeriseToRoutine = getBooleanInput("This Routine already exists with this Exercise. Would you like to add it to the Routine? (Y or N): ", "Please Enter a Valid Selection");
-								if (addExeriseToRoutine) {
-									routineController.addExerciseToRoutine(name, routineExericse);
-								}
-							}
-						}
-						System.out.println("This Routine already exists with this Exercise");
-					} else {
-						routineController.createRoutine(name, routineExericse);
-						System.out.println("Routine has been Created Successfully.");
-					}
-					
-				} else if (answer == index) {
-					return;
-				}
-				addExercise = getBooleanInput("Add an additional Existing Exercise to Routine? (Y or N): ", "Please Enter a Valid Selection");
-			}
-		}
-	}
-	
-	// Creates a new Workout Class, only accessible by Trainers
-	public static void createWorkoutClass(String name) {
-		if (name == "") {
-			name = getString("Enter Name of Workout Class: ", "Please Enter a Valid Name");
-		}
-		GymHours gh = addTimeEntry();
-		WorkoutClass wc = new WorkoutClass(name, gh);
-		if (!workoutClassController.getWorkoutClasses().contains(wc)) {
-			workoutClassController.createWorkoutClass(name, gh);
-			System.out.println("Workout Class " + wc.getName() + "Has been Added to the Gym");
-		} else {
-			System.out.println("This Workout Class already exists.");
-			System.out.println("Please select this Workout Class through the Modify Workout Class Selection to Modify it.");
-		}
-	}
-	
-	// Creates a new Exercise, only accessible by Trainers via a Routine
-	public static void createExercise() {
-		System.out.println("Please select what Fields are needed for Exercise:\n" + 
-				"[1] Duration\n" + 
-				"[2] Reps\n" + 
-				"[3] Equipment & Duration\n" +
-				"[4] Equipment & Reps\n" + 
-				"[5] Return\n"
-				);
-		int answer = getIntSelection(1, 5);
-		String name = getString("Enter Name of Exercise: ", "Please Enter a Valid Name");
-		Duration d = new Duration();
-		String equipmentName;
-		Equipment e = new Equipment();
-		int numberOfReps;
-		switch(answer) {
-		case 1:
-			d = new Duration(getInt("Enter the Duration (in minutes) for this Routine: ", "Please Enter a Valid Duration"));
-			exerciseController.createExercise(name, d);
-			break;
-		case 2:
-			numberOfReps = getInt("Enter the Number of Reps for this Routine: ", "Please Enter a Valid Number");
-			exerciseController.createExercise(name, numberOfReps);
-			break;
-		case 3:
-			System.out.println("Equipement available in Gym: ");
-			equipmentController.toStringEquipment();
-			equipmentName = getString("Enter the Name of the piece of Equipment you wish to Use in your Routine: ", "Please Enter a Valid Equipment");
-			e = equipmentController.getEquipment(equipmentName);
-			if (e == null) {
-				System.out.println("This Equipment does not exist. Routine can not be added");
-			} else {
-				d = new Duration(getInt("Enter the Duration (in minutes) for this Routine: ", "Please Enter a Valid Duration"));
-				exerciseController.createExercise(name, e, d);
-			}
-			break;
-		case 4:
-			System.out.println("Equipement available in Gym: ");
-			equipmentController.toStringEquipment();
-			equipmentName = getString("Enter the Name of the piece of Equipment you wish to Use in your Routine: ", "Please Enter a Valid Equipment");
-			e = equipmentController.getEquipment(equipmentName);
-			if (e == null) {
-				System.out.println("This Equipment does not exist. Routine can not be added");
-			} else {
-				numberOfReps = getInt("Enter the Number of Reps for this Routine: ", "Please Enter a Valid Number");
-				exerciseController.createExercise(name, e, numberOfReps);
-			}
-			break;
-		case 5:
-			return;
-		}
-	}
-	
 	/**
 	 * User Modification/Editing Views
 	 */
@@ -649,7 +240,11 @@ public class CLI {
 			break;
 		case 3:
 			System.out.println("Current Phone Number is: " + p.getPhone());
-			p.setPhone(getInt("Enter a New Phone Number: ", "Please Enter a Valid Phone Number"));
+			String pNumber = "";	
+			while (pNumber.length() != 10 || !(pNumber.matches("[0-9]+"))) {
+				pNumber = getString("Enter a New Phone Number: ", "Please Enter a Valid Phone Number");
+			}
+			p.setPhone(pNumber);
 			break;
 		case 4:
 			System.out.println("Current Email Address is: " + p.getEmail());
@@ -681,7 +276,9 @@ public class CLI {
 					p.getAddress().setState(stringField);
 					break;
 				case 4:
-					intField = getInt("Enter a New Zip Code: ", "Please Enter a Zip Code");
+					while (String.valueOf(intField).length() != 5) {
+						intField = getInt("Enter a New Zip Code: ", "Please Enter a Valid Zip Code");
+					}
 					p.getAddress().setZip(intField);
 					break;
 				case 5:
@@ -713,10 +310,80 @@ public class CLI {
 			t.addQualification(new Qualification(getString("Enter a New Qualification: ", "Please Enter a Valid Qualification")));
 			break;
 		case 9:
-			System.out.println("Current Schedule is: " + t.getSchedule());
-			GymHours gh = addTimeEntry();
-			t.addWorkHoursToSchedule(gh.getStartTime(), gh.getEndTime(), gh.getDay());
-			break;
+			if (t.getSchedule().size() > 0) {
+				System.out.println("Trainer's Current Schedule is:");
+				for (GymHours gh : t.getSchedule()) {
+					System.out.println(gh.toString());
+				}
+			} else {
+				System.out.println("Trainer is currently not scheduled to teach any classes.");
+			}
+			System.out.println("What do you want to do modify in this Trainer's schedule?:\n" + 
+					"[1] Add Hours\n" + 
+					"[2] Remove Hours\n" +  
+					"[3] Clear Entire Schedule\n" + 
+					"[4] No Change\n");
+			int scheduleAnswer = getIntSelection(1, 4);
+			boolean modSchedule = false;
+			switch (scheduleAnswer) {
+			case 1:
+				GymHours gh = addTimeEntry();
+				boolean isDuplicateDays = false;
+				if (t.getSchedule() != null) {
+					for (GymHours scheduleGymHours : t.getSchedule()) {
+						if (scheduleGymHours.getDay().equals(gh.getDay())) {
+							isDuplicateDays = true;
+							modSchedule = getBooleanInput("Trainer already works on this Day. Do you want to change it to the new hours entered? (Y or N): ", "Please Enter a Valid Selection");
+							if (modSchedule) {
+								t.removeWorkHoursFromSchedule(scheduleGymHours);
+								trainerController.setSchedule(t, gh);
+								System.out.println("The Trainer's Schedule has been updated.");
+							}
+						}
+					}
+					if (isDuplicateDays == false) {
+						trainerController.setSchedule(t, gh);
+						System.out.println("The Trainer's Schedule has been updated.");
+					}
+				} else {
+					trainerController.setSchedule(t, gh);
+					System.out.println("The Trainer's Schedule has been updated.");
+				}
+				break;
+			case 2:
+				if (t.getSchedule().isEmpty()) {
+					System.out.println("Trainer is currently not scheduled to teach any classes.");
+				} else {
+					Map<Integer, GymHours> gymHoursMap = new HashMap<Integer, GymHours>();
+					System.out.println("Select the Number of the Corresponding Day of this Trainer's Schedule to Modify: ");
+					int index = 1;
+					for (GymHours trainerHours : t.getSchedule()) {
+						System.out.println("[" + index + "] " + trainerHours.toString());
+						gymHoursMap.put(index, trainerHours);
+						index++;
+					}
+					System.out.println("[" + index + "] Return to Previous Screen");
+					int answer = getIntSelection(1, index);
+					
+					if (answer >= 1 && answer < index) {
+						GymHours gymHoursToRemove = gymHoursMap.get(answer);
+						modSchedule = getBooleanInput("Are you sure you want to remove the selected Hours from the Trainer's Schedule? (Y or N): ", "Please Enter a Valid Selection");
+						if (modSchedule) {
+							t.removeWorkHoursFromSchedule(gymHoursToRemove);
+							System.out.println("The Trainer's Schedule has been updated.");
+						}
+					}
+				}
+				break;
+			case 3:
+				modSchedule = getBooleanInput("Are you sure you want to clear this Trainer's entire Schedule? (Y or N): ", "Please Enter a Valid Selection");
+				if (modSchedule) {
+					t.clearSchedule();
+					System.out.println("The Trainer's Schedule has been cleared.");
+				}
+				break;
+			case 4: return;
+			}
 		case 10: return;
 			}
 		}
@@ -727,12 +394,57 @@ public class CLI {
 			switch(input) {
 		case 8:
 			System.out.println("Currently this Customer is: " + c.getMembership());
-			Membership m = Membership.INACTIVE;
-			boolean isActive = getBooleanInput("Is Customer Active? (Y or N): ", "Please Enter a Valid Selection");
-				if (isActive) {
-					m = Membership.ACTIVE;
-				}
-			c.setMembership(m);
+			System.out.println("What Status do you want to change the Customer's Membership to?:\n" + 
+					"[1] Basic\n" + 
+					"[2] Regular\n" +  
+					"[3] Premium\n" + 
+					"[4] Inactive\n" +
+					"[5] No Changes\n");
+			int statusAnswer = getIntSelection(1, 5);
+			boolean isActive = false;
+			switch(statusAnswer) {
+				case 1:
+					if (!c.getMembership().equals(Membership.BASIC)) {
+						isActive = getBooleanInput("Are you sure you want this Customer to have a Basic Status? (Y or N): ", "Please Enter a Valid Selection");
+						if (isActive) {
+							customerController.setMembershipStatus(c, Membership.BASIC);
+						}
+					} else {
+						System.out.println("Customer is already Basic Status. No Change has been made.");
+					}
+					break;
+				case 2:
+					if (!c.getMembership().equals(Membership.REGULAR)) {
+						isActive = getBooleanInput("Are you sure you want this Customer to have a Regular Status? (Y or N): ", "Please Enter a Valid Selection");
+						if (isActive) {
+							customerController.setMembershipStatus(c, Membership.REGULAR);
+						}
+					} else {
+						System.out.println("Customer is already Regular Status. No Change has been made.");
+					}
+					break;
+				case 3:
+					if (!c.getMembership().equals(Membership.PREMIUM)) {
+						isActive = getBooleanInput("Are you sure you want this Customer to have a Premium Status? (Y or N): ", "Please Enter a Valid Selection");
+						if (isActive) {
+							customerController.setMembershipStatus(c, Membership.PREMIUM);
+						}
+					} else {
+						System.out.println("Customer is already Premium Status. No Change has been made.");
+					}
+					break;
+				case 4:
+					if (!c.getMembership().equals(Membership.INACTIVE)) {
+						isActive = getBooleanInput("Are you sure you want this Customer to have an Inactive Status? (Y or N): ", "Please Enter a Valid Selection");
+						if (isActive) {
+							customerController.setMembershipStatus(c, Membership.INACTIVE);
+						}
+					} else {
+						System.out.println("Customer is already Inactive Status. No Change has been made.");
+					}
+					break;
+				case 5: return;
+			}
 		case 9: return;
 			}
 		}
@@ -763,11 +475,11 @@ public class CLI {
 				System.out.println("The piece of Equipment you searched for does not Exist");
 				boolean addEquipment = getBooleanInput("Would you like to Add this Equipment? (Y or N): ", "Please Enter a Valid Selection");
 				if (addEquipment) {
-					createEquipment(e.getName());
+					CLICreatorScreens.createEquipment(e.getName());
 				}
 			} else {
 				System.out.println(e.toString());
-				System.out.println("What Part of the Equipment would you like to Modify?" + 
+				System.out.println("What Part of the Equipment would you like to Modify?\n" + 
 						"[1] Name\n" + 
 						"[2] Picture\n" +  
 						"[3] Quantity\n" + 
@@ -846,6 +558,12 @@ public class CLI {
 				System.out.println("The Routine you selected does not seem to Exist");
 			} else {
 				System.out.println(r.toString());
+				if (r.getExercises().size() > 0) {
+					for (Exercise e : r.getExercises()) {
+						System.out.println(e);
+					}
+				}
+
 				System.out.println("What Part of the Routine would you like to Modify?\n" + 
 						"[1] Add Exercises\n" +
 						"[2] Remove Exercises\n" +
@@ -864,7 +582,7 @@ public class CLI {
 							selection++;
 						}
 					}
-					System.out.println("[" + index + "] Mo Modification");
+					System.out.println("[" + selection + "] Mo Modification");
 					answer = getIntSelection(1, selection);
 					
 					if (answer >= 1 && answer < selection) {
@@ -882,6 +600,11 @@ public class CLI {
 					}
 					break;
 				case 2:
+					if (r.getExercises().size() == 1) {
+						System.out.println("Routine must have an Exercise. If you wish to remove this Exercise, please Add an Exercise to the Routine first");
+						break;
+					}
+					
 					System.out.println("Select the Number of the Corresponding Exercise to Remove in this Routine: ");
 					selection = 1;
 					for (Exercise exer : r.getExercises()) {
@@ -889,7 +612,7 @@ public class CLI {
 						exerciseMap.put(selection, exer);
 						selection++;
 					}
-					System.out.println("[" + index + "] Mo Modification");
+					System.out.println("[" + selection + "] Mo Modification");
 					answer = getIntSelection(1, selection);
 					
 					if (answer >= 1 && answer < selection) {
@@ -918,8 +641,6 @@ public class CLI {
 	
 	// Modifies an existing Workout Class, only accessible by Trainers
 	public static void modifyWorkoutClass() {
-		//System.out.println("Current Workout Classes in Gym:");
-		//System.out.println(workoutClassController.toStringWorkoutClasses());
 		Map<Integer, WorkoutClass> workoutClasseMap = new HashMap<Integer, WorkoutClass>();
 		Set<WorkoutClass> allWorkoutClasses = workoutClassController.getWorkoutClasses();
 		System.out.println("Select the Number of the Corresponding Wokrout Class to Modify: ");
@@ -991,19 +712,64 @@ public class CLI {
 			} else {
 				System.out.println(selectedExercise.getName());
 				System.out.println("What Part of the Exercise would you like to Modify?\n" + 
-						"[1] Modify Duration (Currently Not Available)\n" +
-						"[2] Modify Equipemnt (Currently Not Available)\n" +
+						"[1] Modify Duration\n" +
+						"[2] Modify Equipemnt\n" +
 						"[3] Modify Number of Reps (Currently Not Available)\n" + 
 						"[4] Delete Exercise\n" + 
 						"[5] No Modification\n"
 						);
 				answer = getIntSelection(1, 5);
+				int intField = 0;
+				String equipmentName = "";
+				Equipment e = null;
 				switch(answer) {
-				case 1: 
+				case 1:
+					if (selectedExercise.getDuration() != null) {
+						System.out.println("Exercise currently has a Duration of: " + selectedExercise.getDuration().toString());
+						intField = getInt("Enter a New Duration for this Exercise: ", "Please Enter a Valid Duration");
+						selectedExercise.setDuration(new Duration(intField));
+						System.out.println("Duration has been successfully modified");
+					} else {
+						System.out.println("This Exercise does not have a Duration, please create a new Exercise with a Duration should you wish to have it as an attribute.");
+					}
+					
 					break;
 				case 2:
+					if (selectedExercise.getEquipment() != null) {
+						System.out.println("Exercise currently makes use of the following Equipment:");
+						System.out.println(selectedExercise.getEquipment().toString());
+					}
+					
+					System.out.println("Equipement available in Gym: ");
+					System.out.println(equipmentController.toStringEquipment());
+					equipmentName = getString("Enter the Name of the New piece of Equipment you wish to Use in your Routine: ", "Please Enter a Valid Equipment");
+					e = equipmentController.getEquipment(equipmentName);
+					if (e == null) {
+						System.out.println("This Equipment does not exist. Exercise can not be modified");
+					} else {
+						selectedExercise.setEquipment(e);
+						System.out.println("Equipment has been successfully modified.");
+					}
 					break;
 				case 3:
+					if (selectedExercise.getWorkoutSet() != null) {
+						System.out.println("Exercise currently has the following sets: ");
+						System.out.println(selectedExercise.getWorkoutSet().toString());
+						boolean addSets = getBooleanInput("Would you like to modify this set? (Y or N)\n(Selecting Y will remove your current Set and you will have to create the whole set): ", "Please Enter a Valid Selection");
+						WorkoutSet wSet = new WorkoutSet();
+						if (addSets) {
+							intField = getInt("Enter the number of Sets: ", "Please Enter a Valid Quantity");
+							int repsNumber = 0;
+							for (int i = 0; i < intField; i++) {
+								repsNumber = getInt("Enter the Number of Reps for Set " + i + 1 + ": ", "Please Enter a Valid Quantity");
+								wSet.addRep(repsNumber);
+							}
+							selectedExercise.setWorkoutSet(wSet);
+							System.out.println("Workout Set has been updated");
+						}
+					} else {
+						System.out.println("This Exercise does not have a Set, please create a new Exercise with a Set should you wish to have it as an attribute.");
+					}
 					break;
 				case 4:
 					boolean deleteExercise = getBooleanInput("Are you sure you would like to delete this Exercise? (Y or N): ", "Please Enter a Valid Selection");
@@ -1020,11 +786,106 @@ public class CLI {
 		}
 	}
 	
-	
-	
-	public static void enrollInClass() {
-		System.out.println("Please select a corresponding number of an available class in which to enroll: ");
+	// only regular and premium  members can enroll with a Trainer
+	public static void enrollCustomerWithTrainer() {
 		Customer currentC = customerController.getUser(currentUserId);
+		
+		if (!currentC.getMembership().getStatus().equals("P") && !currentC.getMembership().getStatus().equals("R")) {
+			System.out.println("Only Regular and Premium Members can enroll with a Trainer.");
+			System.out.println("Please consult a Trainer if you wish to change your Membership status.");
+			return;
+		}
+		
+		Map<Integer, Trainer> availableTrainers = new HashMap<Integer, Trainer>();
+		int index = 1;
+		String selectionsString = "";
+		for (Trainer t : trainerController.getUsers()) {
+			if (t.getCustomers() != null) {
+				if (t.getCustomers().contains(currentC)) {
+					System.out.println("You are already enrolled with Trainer " + t.getFirstName() + " " + t.getLastName());
+					boolean unenrollTrainer = getBooleanInput("Do you wish to unenroll from this Trainer and select a new one? (Y or N): ", "Please Enter a Valid Selection");
+					if (unenrollTrainer) {
+						trainerController.unenrollCustomerFromTrainer(t, currentC);
+						System.out.println("Customer has been unenrolled from this Trainer.");
+					} else {
+						System.out.println("No modification to your Trainer has been made.");
+						return;
+					}
+				}
+			}
+			selectionsString += ("[" + index + "] " + t.getFirstName() + " " + t.getLastName() + "\n");
+			availableTrainers.put(index, t);
+			index++;
+		}
+		System.out.println("Please select a corresponding number of an available Trainer in which to enroll: ");
+		System.out.print(selectionsString);
+		System.out.println("[" + index + "] Return to Previous Screen");
+		int answer = getIntSelection(1, index);
+		
+		if (answer >= 1 && answer < index) {
+			Trainer selectedTrainer = availableTrainers.get(answer);
+			trainerController.enrollCustomerWithTrainer(selectedTrainer, currentC);
+			System.out.println("You are now enrolled to Train with " + selectedTrainer.getFirstName() + " " + selectedTrainer.getLastName());
+		} else if (answer == index) {
+			return;
+		}
+	}
+	
+	// only regular and premium  members can unenroll from a Trainer
+	public static void viewCurrentTrainer() {
+		Customer currentC = customerController.getUser(currentUserId);
+		
+		if (!currentC.getMembership().getStatus().equals("P") && !currentC.getMembership().getStatus().equals("R")) {
+			System.out.println("Only Regular and Premium Members can enroll with a Trainer.");
+			System.out.println("Please consult a Trainer if you wish to change your Membership status.");
+			return;
+		}
+		
+		if (currentC.getPrivateTrainer() != null) {
+			Trainer t = currentC.getPrivateTrainer();
+			System.out.println("You are enrolled with Trainer " + t.getFirstName() + " " + t.getLastName());
+		} else {
+			System.out.println("You are currently not enrolled with a Trainer.");
+		}
+	}
+	
+	// only regular and premium  members can unenroll in fitness classes
+	public static void unenrollCustomerWithTrainer() {
+		Customer currentC = customerController.getUser(currentUserId);
+		
+		if (!currentC.getMembership().getStatus().equals("P") && !currentC.getMembership().getStatus().equals("R")) {
+			System.out.println("Only Regular and Premium Members can enroll with a Trainer.");
+			System.out.println("Please consult a Trainer if you wish to change your Membership status.");
+			return;
+		}
+		
+		if (currentC.getPrivateTrainer() != null) {
+			Trainer t = currentC.getPrivateTrainer();
+			System.out.println("You are already enrolled with Trainer " + t.getFirstName() + " " + t.getLastName());
+			boolean unenrollTrainer = getBooleanInput("Do you wish to unenroll from this Trainer? (Y or N): ", "Please Enter a Valid Selection");
+			if (unenrollTrainer) {
+				trainerController.unenrollCustomerFromTrainer(t, currentC);
+				System.out.println("Customer has been unenrolled from this Trainer.");
+			} else {
+				System.out.println("No change has been made.");
+			}
+		} else {
+			System.out.println("You are currently not enrolled with a Trainer.");
+		}
+	}
+	
+	// only premium members can enroll in fitness classes
+	public static void enrollInClass() {
+		Customer currentC = customerController.getUser(currentUserId);
+		
+		if (!currentC.getMembership().getStatus().equals("P")) {
+			System.out.println("Only Premium Members can enroll in Fitness Classes.");
+			System.out.println("Please consult a Trainer if you wish to change your Membership status.");
+			return;
+		}
+		
+		System.out.println("Please select a corresponding number of an available class in which to enroll: ");
+		
 		Map<Integer, WorkoutClass> availableClasses = new HashMap<Integer, WorkoutClass>();
 		int index = 1;
 		for (WorkoutClass workc : workoutClassController.getWorkoutClasses()) {
@@ -1040,15 +901,28 @@ public class CLI {
 		if (answer >= 1 && answer < index) {
 			WorkoutClass selectedWorkoutClass = availableClasses.get(answer);
 			workoutClassController.getWorkoutClass(selectedWorkoutClass.getName(), selectedWorkoutClass.getGymHours()).enrollInClass(currentC);
+			currentC.enrollInClass(selectedWorkoutClass);
 			System.out.println("You are now enrolled in the Workout Class " + selectedWorkoutClass.getName());
 		} else if (answer == index) {
 			return;
 		}
 	}
 	
+	// only premium members can unenroll in fitness classes
 	public static void unenrollFromClass() {
-		System.out.println("Please select a corresponding number of a class you are enrolled in to Unenroll: ");
 		Customer currentC = customerController.getUser(currentUserId);
+		
+		if (!currentC.getMembership().getStatus().equals("P")) {
+			System.out.println("Only Premium Members can enroll in Fitness Classes.");
+			System.out.println("Please consult a Trainer if you wish to change your Membership status.");
+			return;
+		} else if (currentC.getEnrolledClasses().isEmpty()) {
+			System.out.println("You are currently not enrolled in any classes.");
+			return;
+		}
+		
+		System.out.println("Please select a corresponding number of a class you are enrolled in to Unenroll: ");
+		
 		Map<Integer, WorkoutClass> enrolledClasses = new HashMap<Integer, WorkoutClass>();
 		int index = 1;
 		
@@ -1065,6 +939,7 @@ public class CLI {
 		if (answer >= 1 && answer < index) {
 			WorkoutClass selectedWorkoutClass = enrolledClasses.get(answer);
 			workoutClassController.getWorkoutClass(selectedWorkoutClass.getName(), selectedWorkoutClass.getGymHours()).unenrollFromClass(currentC);
+			currentC.unenrollFromClass(selectedWorkoutClass);
 			System.out.println("You are now unenrolled from this Workout Class " + selectedWorkoutClass.getName());
 		} else if (answer == index) {
 			return;
@@ -1076,7 +951,7 @@ public class CLI {
 	// Receives a String Value from the User
 	public static String getString(String prompt, String exMessage) {
 		String answer = "";
-		while (answer == "") {
+		while (answer.equals("")) {
 			System.out.println(prompt);
 			try {
 				answer = scanner.nextLine();
@@ -1097,8 +972,9 @@ public class CLI {
 		while (answer == 0) {
 			try {
 				answer = scanner.nextInt();
+				scanner.nextLine();
 				if (answer >= first && answer <= second) {
-					scanner.nextLine();
+					//scanner.nextLine();
 					System.out.println();
 				}
 			} catch (Exception e) {
@@ -1112,18 +988,18 @@ public class CLI {
 	
 	// Receives an Int Value from the User
 	public static int getInt(String prompt, String exMessage) {
-		int answer = 0;
-		while (answer == 0) {
+		int answer = -1;
+		while (answer == -1) {
 			System.out.println(prompt);
 			try {
 				answer = scanner.nextInt();
-				if (answer > 0) {
+				if (answer >= 0) {
 					scanner.nextLine();
 					System.out.println();
 				}
 			} catch (Exception e) {
 				System.out.println(exMessage);
-				answer = 0;
+				answer = -1;
 				scanner.next();
 			}
 		}
@@ -1155,7 +1031,7 @@ public class CLI {
 	
 	// Creates a new Time Entry in the GymHours format for System
 	public static GymHours addTimeEntry() {
-		GymHours gh = new GymHours();
+		GymHours gh = null;
 		LocalTime startTime = null;;
 		LocalTime endTime = null;
 		DayOfWeek day = null;
@@ -1182,98 +1058,40 @@ public class CLI {
 		}
 		
 		while (gh == null) {
-			int startHour = getInt("Start at hour: ", "Please enter a valid number");
-			int startMinute = getInt("Minutes: ", "Please enter a valid number");
+			int startHour = -1;
+			while (startHour <= -1 || startHour >= 24) {
+				startHour = getInt("Start at Hour (0-23): ", "Please enter a valid number");
+			}
+			int startMinute = -1;
+			while (startMinute <= -1 || startMinute >= 60) {
+				startMinute = getInt("Start at Minute (0-59): ", "Please enter a valid number");
+			}
+			
+			int endHour = -1;
+			while (endHour <= -1 || endHour >= 24) {
+				endHour = getInt("End at Hour (0-23): ", "Please enter a valid number");
+			}
+			int endMinute = -1;
+			while (endMinute <= -1 || endMinute >= 60) {
+				endMinute = getInt("End at Minute (0-59): ", "Please enter a valid number");
+			}
+			
 			startTime = LocalTime.of(startHour, startMinute);
-			startHour = getInt("End at hour: ", "Please enter a valid number");
-			startMinute = getInt("Minutes: ", "Please enter a valid number");
-			endTime = LocalTime.of(startHour, startMinute);
+			endTime = LocalTime.of(endHour, endMinute);
+			
 			if (startTime.isBefore(endTime)) {
 				gh = new GymHours(startTime, endTime, day);
-			}
+			} else {
+				System.out.println("End Time must be AFTER the Start Time");
+				boolean addTime = getBooleanInput("Would you like to Add a Start and End Time again? (Y for Yes, N to return with no modification)", "Please Enter a Valid Selection");
+				if (!addTime) {
+					return null;
+				}
+			}			
 		}
-			
 		return gh;
 	}
 	
-	public static void hardCodeTrainers() {
-		Trainer t1 = new Trainer("Jack", "Trainer", "Jack");
-		Trainer t2 = new Trainer("Amy", "Worker", "Amy");
-		Trainer t3 = new Trainer("Linda", "Teacher", "Linda");
-		Address a1 = new Address("123 Main Street", "Sacramento", "CA", 95652);
-		Address a2 = new Address("987 Market Avenue", "Los Angeles", "CA", 81825);
-		Address a3 = new Address("456 Taylor Road", "San Francisco", "CA", 94678);
-		t1.setAddress(a1);
-		t2.setAddress(a2);
-		t3.setAddress(a3);
-		t1.setPhone(1234567891);
-		t2.setPhone(1234567891);
-		t3.setPhone(1234567891);
-		
-		trainerController.addUser(t1);
-		trainerController.addUser(t2);
-		trainerController.addUser(t3);
-	}
-	
-	public static void hardCodeCustomers() {
-		Customer c1 = new Customer("Aaron", "Athletic", "Aaron");
-		Customer c2 = new Customer("Randy", "Runner", "Randy");
-		Customer c3 = new Customer("Sally", "Swimmer", "Sally");
-		Address a1 = new Address("123 Main Street", "Sacramento", "CA", 95652);
-		Address a2 = new Address("987 Market Avenue", "Los Angeles", "CA", 81825);
-		Address a3 = new Address("456 Taylor Road", "San Francisco", "CA", 94678);
-		c1.setAddress(a1);
-		c2.setAddress(a2);
-		c3.setAddress(a3);
-		c1.setPhone(1234567891);
-		c2.setPhone(1234567891);
-		c3.setPhone(1234567891);
-		
-		customerController.addUser(c1);
-		customerController.addUser(c2);
-		customerController.addUser(c3);
-	}
-	
-	public static void hardCodeEquipment() {
-		Equipment e1 = new Equipment("Bench Press");
-		Equipment e2 = new Equipment("Rowing Machine");
-		Equipment e3 = new Equipment("Stairmaster");
-		
-		equipmentController.addEquipment(e1);
-		equipmentController.addEquipment(e2);
-		equipmentController.addEquipment(e3);
-	}
-	
-	public static void hardCodeWorkoutClass() {
-		GymHours gh1 = new GymHours(LocalTime.of(8, 0), LocalTime.of(9, 0), DayOfWeek.MONDAY);
-		GymHours gh2 = new GymHours(LocalTime.of(15, 0), LocalTime.of(16, 0), DayOfWeek.TUESDAY);
-		GymHours gh3 = new GymHours(LocalTime.of(18, 0), LocalTime.of(19, 0), DayOfWeek.WEDNESDAY);
-		
-		workoutClassController.createWorkoutClass("Morning Aerobics", gh1);
-		workoutClassController.createWorkoutClass("Afternoon Weights", gh2);
-		workoutClassController.createWorkoutClass("Evening Yoga", gh3);
-	}
-	
-	public static void hardCodeExercise() {
-		Exercise durationExercise = new Exercise("Running", new Duration(20));
-		Exercise equipmentAndDurationExercise = new Exercise("Legs", equipmentController.getEquipment("Stairmaster"), new Duration(10));
-		Exercise repExercise = new Exercise("Lunges", 15);
-		Exercise repAndEquipmentExercise = new Exercise("Weight Lifting", equipmentController.getEquipment("Bench Press"), 10);
-		
-		exerciseController.addExercise(durationExercise);
-		exerciseController.addExercise(equipmentAndDurationExercise);
-		exerciseController.addExercise(repAndEquipmentExercise);
-		exerciseController.addExercise(repExercise);
-	}
-	
-	public static void hardCodeRoutines() {
-		routineController.createRoutine("Running Routine", exerciseController.getExercise("Running"));
-		routineController.createRoutine("Legs Routine", exerciseController.getExercise("Legs"));
-		routineController.createRoutine("Lunges Routine", exerciseController.getExercise("Lunges"));
-		routineController.createRoutine("Weight Lifting Routine", exerciseController.getExercise("Weight Lifting"));
-		
-	}
- 	
 	public static void main(String args[]) {
 		loginHandler = LoginHandler.getInstance();
 		
@@ -1285,14 +1103,14 @@ public class CLI {
 		routineController = new RoutineController();
 		workoutClassController = new WorkoutClassController();
 		
-		hardCodeTrainers();
-		hardCodeCustomers();
-		hardCodeEquipment();
-		hardCodeExercise();
-		hardCodeWorkoutClass();
-		hardCodeRoutines();
+		CLIHardCode.hardCodeTrainers();
+		CLIHardCode.hardCodeCustomers();
+		CLIHardCode.hardCodeEquipment();
+		CLIHardCode.hardCodeExercise();
+		CLIHardCode.hardCodeWorkoutClass();
+		CLIHardCode.hardCodeRoutines();
 		
-		hardCodedUsers();
+		CLIHardCode.hardCodedUsers();
 		login();
 		
 		

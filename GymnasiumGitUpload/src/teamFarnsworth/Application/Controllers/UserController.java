@@ -2,7 +2,7 @@ package teamFarnsworth.Application.Controllers;
 
 import java.util.Set;
 
-import teamFarnsworth.Domain.Person;
+import teamFarnsworth.Domain.Users.Person;
 
 public interface UserController<E> {
 

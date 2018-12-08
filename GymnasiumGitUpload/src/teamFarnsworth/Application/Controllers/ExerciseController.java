@@ -2,10 +2,10 @@ package teamFarnsworth.Application.Controllers;
 
 import java.util.*;
 
-import teamFarnsworth.Domain.Duration;
-import teamFarnsworth.Domain.Equipment;
-import teamFarnsworth.Domain.Exercise;
-import teamFarnsworth.Handlers.ExerciseHandler;
+import teamFarnsworth.Domain.Entities.Duration;
+import teamFarnsworth.Domain.Entities.Equipment;
+import teamFarnsworth.Domain.Entities.Exercise;
+import teamFarnsworth.Handlers.EntityHandlers.ExerciseHandler;
 
 public class ExerciseController {
 
@@ -31,36 +31,6 @@ public class ExerciseController {
 	
 	public Exercise getExercise(String name) {
 		Exercise exercise = new Exercise(name);
-		for (Exercise e : exerciseHandler.getExercises()){
-			if (e.equals(exercise)) {
-				return e;
-			}
-		}
-		return null;
-	}
-	
-	public Exercise addExercise(String name, Duration duration){
-		Exercise exercise = new Exercise(name, duration);
-		for (Exercise e : exerciseHandler.getExercises()){
-			if (e.equals(exercise)) {
-				return e;
-			}
-		}
-		return null;
-	}
-	
-	public Exercise addExercise(String name, Equipment eq, int reps){
-		Exercise exercise = new Exercise(name, eq, reps);
-		for (Exercise e : exerciseHandler.getExercises()){
-			if (e.equals(exercise)) {
-				return e;
-			}
-		}
-		return null;
-	}
-	
-	public Exercise addExercise(String name, Equipment eq, Duration duration){
-		Exercise exercise = new Exercise(name, eq, duration);
 		for (Exercise e : exerciseHandler.getExercises()){
 			if (e.equals(exercise)) {
 				return e;
