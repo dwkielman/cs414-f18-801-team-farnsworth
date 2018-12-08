@@ -66,7 +66,7 @@ public class CLIUserScreens {
 	// Customer's Workout Class Schedule
 	public static void customerClassesScreen() {
 		Customer c = CLI.customerController.getUser(CLI.currentUserId);
-		if (c.getEnrolledClasses() != null) {
+		if (!c.getEnrolledClasses().isEmpty()) {
 			System.out.println(c.workoutClassesToString());
 		} else {
 			System.out.println("You are currently not enrolled in any classes");

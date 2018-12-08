@@ -900,8 +900,7 @@ public class CLI {
 		
 		if (answer >= 1 && answer < index) {
 			WorkoutClass selectedWorkoutClass = availableClasses.get(answer);
-			workoutClassController.getWorkoutClass(selectedWorkoutClass.getName(), selectedWorkoutClass.getGymHours()).enrollInClass(currentC);
-			currentC.enrollInClass(selectedWorkoutClass);
+			workoutClassController.enrollCustomerInWorkoutClass(selectedWorkoutClass, currentC);
 			System.out.println("You are now enrolled in the Workout Class " + selectedWorkoutClass.getName());
 		} else if (answer == index) {
 			return;
@@ -938,8 +937,7 @@ public class CLI {
 		
 		if (answer >= 1 && answer < index) {
 			WorkoutClass selectedWorkoutClass = enrolledClasses.get(answer);
-			workoutClassController.getWorkoutClass(selectedWorkoutClass.getName(), selectedWorkoutClass.getGymHours()).unenrollFromClass(currentC);
-			currentC.unenrollFromClass(selectedWorkoutClass);
+			workoutClassController.unenrollCustomerFromWorkoutClass(selectedWorkoutClass, currentC);
 			System.out.println("You are now unenrolled from this Workout Class " + selectedWorkoutClass.getName());
 		} else if (answer == index) {
 			return;
