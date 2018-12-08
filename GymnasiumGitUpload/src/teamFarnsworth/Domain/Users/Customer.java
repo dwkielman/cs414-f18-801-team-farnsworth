@@ -49,9 +49,6 @@ public class Customer extends Person {
 	}
 	
 	public Set<WorkoutClass> getEnrolledClasses() {
-		if (this.workoutClasses.isEmpty()) {
-			return null;
-		}
 		return workoutClasses;
 	}
 	

@@ -44,6 +44,16 @@ public class WorkoutClassController {
 		return workoutClass.getAttendees();
 	}
 	
+	public void enrollCustomerInWorkoutClass(WorkoutClass wc, Customer c) {
+		wc.enrollInClass(c);
+		c.enrollInClass(wc);
+	}
+	
+	public void unenrollCustomerFromWorkoutClass(WorkoutClass wc, Customer c) {
+		wc.unenrollFromClass(c);
+		c.unenrollFromClass(wc);
+	}
+	
 	public String toStringWorkoutClasses(){
 		String returnString = "";
 		
