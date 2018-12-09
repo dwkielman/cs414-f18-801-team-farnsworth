@@ -410,6 +410,7 @@ public class CLI {
 						isActive = getBooleanInput("Are you sure you want this Customer to have a Basic Status? (Y or N): ", "Please Enter a Valid Selection");
 						if (isActive) {
 							customerController.setMembershipStatus(c, Membership.BASIC);
+							System.out.println("Customer's Status has been updated.");
 						}
 					} else {
 						System.out.println("Customer is already Basic Status. No Change has been made.");
@@ -420,6 +421,7 @@ public class CLI {
 						isActive = getBooleanInput("Are you sure you want this Customer to have a Regular Status? (Y or N): ", "Please Enter a Valid Selection");
 						if (isActive) {
 							customerController.setMembershipStatus(c, Membership.REGULAR);
+							System.out.println("Customer's Status has been updated.");
 						}
 					} else {
 						System.out.println("Customer is already Regular Status. No Change has been made.");
@@ -430,6 +432,7 @@ public class CLI {
 						isActive = getBooleanInput("Are you sure you want this Customer to have a Premium Status? (Y or N): ", "Please Enter a Valid Selection");
 						if (isActive) {
 							customerController.setMembershipStatus(c, Membership.PREMIUM);
+							System.out.println("Customer's Status has been updated.");
 						}
 					} else {
 						System.out.println("Customer is already Premium Status. No Change has been made.");
@@ -440,6 +443,7 @@ public class CLI {
 						isActive = getBooleanInput("Are you sure you want this Customer to have an Inactive Status? (Y or N): ", "Please Enter a Valid Selection");
 						if (isActive) {
 							customerController.setMembershipStatus(c, Membership.INACTIVE);
+							System.out.println("Customer's Status has been updated.");
 						}
 					} else {
 						System.out.println("Customer is already Inactive Status. No Change has been made.");
@@ -447,6 +451,7 @@ public class CLI {
 					break;
 				case 5: return;
 			}
+			break;
 		case 9: 
 			if (c.getRoutines().isEmpty()) {
 				System.out.println("Currently, the Customer does not have any Routines Assigned to them.");
@@ -509,6 +514,7 @@ public class CLI {
 					break;
 				case 3: return;
 			}
+			break;
 		case 10: return;
 			}
 		}
