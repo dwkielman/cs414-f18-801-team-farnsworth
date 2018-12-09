@@ -2,6 +2,7 @@ package teamFarnsworth.Application.Controllers;
 
 import java.util.Set;
 
+import teamFarnsworth.Domain.Entities.Routine;
 import teamFarnsworth.Domain.Users.Customer;
 import teamFarnsworth.Domain.Users.Membership;
 import teamFarnsworth.Domain.Users.Person;
@@ -82,5 +83,21 @@ public class CustomerController implements UserController<Customer> {
 				customer.setMembership(m);
 			}
 		}
+	}
+	
+	public void assignRoutine(Routine r, Customer c) {
+		if (!c.getRoutines().contains(r)) {
+			c.addRoutine(r);
+		}
+	}
+	
+	public void unassignRoutine(Routine r, Customer c) {
+		if (c.getRoutines().contains(r)) {
+			c.removeRoutine(r);
+		}
+	}
+	
+	public Set<Routine> getCustomerRoutines(Customer c) {
+		return c.getRoutines();
 	}
 }

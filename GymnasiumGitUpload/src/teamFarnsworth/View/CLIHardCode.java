@@ -7,6 +7,7 @@ import teamFarnsworth.Domain.Entities.Duration;
 import teamFarnsworth.Domain.Entities.Equipment;
 import teamFarnsworth.Domain.Entities.Exercise;
 import teamFarnsworth.Domain.Entities.GymHours;
+import teamFarnsworth.Domain.Entities.Routine;
 import teamFarnsworth.Domain.Users.Address;
 import teamFarnsworth.Domain.Users.Customer;
 import teamFarnsworth.Domain.Users.Membership;
@@ -92,6 +93,8 @@ public class CLIHardCode {
 		c6.setPhone("1234567891");
 		c5.setMembership(Membership.REGULAR);
 		c6.setMembership(Membership.PREMIUM);
+		Routine r1 = new Routine("Running Routine", CLI.exerciseController.getExercise("Running"));
+		c4.addRoutine(r1);
 		
 		CLI.customerController.addUser(c1);
 		CLI.customerController.addUser(c2);

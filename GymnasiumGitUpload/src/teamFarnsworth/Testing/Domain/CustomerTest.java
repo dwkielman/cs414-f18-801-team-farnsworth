@@ -9,7 +9,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import teamFarnsworth.Domain.Entities.Duration;
+import teamFarnsworth.Domain.Entities.Exercise;
 import teamFarnsworth.Domain.Entities.GymHours;
+import teamFarnsworth.Domain.Entities.Routine;
 import teamFarnsworth.Domain.Entities.WorkoutClass;
 import teamFarnsworth.Domain.Users.Customer;
 import teamFarnsworth.Domain.Users.Trainer;
@@ -41,6 +44,8 @@ public class CustomerTest {
 	private String fName2;
 	private String lName2;
 	private String trainerID2;
+	private Exercise durationExercise;
+	private Routine r1;
 	
 	@BeforeEach
 	void setUp() throws Exception {
@@ -62,7 +67,8 @@ public class CustomerTest {
 		trainerID2 = "Tina";
 		t1 = new Trainer(fName, lName, trainerID);
 		t2 = new Trainer(fName2, lName2, trainerID2);
-		
+		durationExercise = new Exercise("Running", new Duration(20));
+		r1 = new Routine("Running Routine", durationExercise);
 	}
 	
 	@Test
@@ -137,6 +143,18 @@ public class CustomerTest {
 		assertTrue(c1.getPrivateTrainer() == null);
 	}
 	
+	@Test
+	void testassignRoutineToCustomer() {
+		c1.addRoutine(r1);
+		assertTrue(c1.getRoutines().size() == 1);
+	}
 	
+	@Test
+	void testunassignRoutineFromCustomer() {
+		c1.addRoutine(r1);
+		assertTrue(c1.getRoutines().size() == 1);
+		c1.removeRoutine(r1);
+		assertTrue(c1.getRoutines().isEmpty());
+	}
 
 }

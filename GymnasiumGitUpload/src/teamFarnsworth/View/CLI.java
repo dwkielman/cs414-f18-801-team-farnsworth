@@ -209,8 +209,9 @@ public class CLI {
 			max = 10;
 		} else if (p.getClass().equals(Customer.class)) {
 			userSpecificOptions = "[8] Membership Status\n" + 
-					"[9] Return to Previous Screen\n";
-			max = 9;
+					"[9] Routines\n" + 
+					"[10] Return to Previous Screen\n";
+			max = 10;
 		}
 		
 		System.out.println("Enter Number for Value you Want to Edit:\n" + 
@@ -308,6 +309,7 @@ public class CLI {
 				System.out.println("Currently this Trainer has No Qualifications Logged");
 			}
 			t.addQualification(new Qualification(getString("Enter a New Qualification: ", "Please Enter a Valid Qualification")));
+			System.out.println("Qualification has successfully been updated.");
 			break;
 		case 9:
 			if (t.getSchedule().size() > 0) {
@@ -445,7 +447,69 @@ public class CLI {
 					break;
 				case 5: return;
 			}
-		case 9: return;
+		case 9: 
+			if (c.getRoutines().isEmpty()) {
+				System.out.println("Currently, the Customer does not have any Routines Assigned to them.");
+			} else {
+				System.out.println("The Customer is currently assigned the following Routines: ");
+				System.out.println(c.routinesToString());
+			}
+			System.out.println("What Would you like to Modify about the Customer's Routines?:\n" + 
+					"[1] Add Routine\n" + 
+					"[2] Remove Routine\n" +  
+					"[3] No Changes\n");
+			int routineAnswer = getIntSelection(1, 3);
+			switch(routineAnswer) {
+				case 1:
+					Map<Integer, Routine> routineMap = new HashMap<Integer, Routine>();
+					Set<Routine> allRoutines = routineController.getRoutines();
+					System.out.println("Please select one of the following Routines to assign to the current Customer:");
+					int index = 1;
+					for (Routine rou : allRoutines) {
+						if (!c.getRoutines().contains(rou)) {
+							System.out.println("[" + index + "] " + rou.toString());
+							routineMap.put(index, rou);
+							index++;
+						}
+					}
+					System.out.println("[" + index + "] Return to Previous Screen");
+					int routineNumberToAdd = getIntSelection(1, index);
+					if (routineNumberToAdd >= 1 && routineNumberToAdd < index) {
+						Routine routineToAdd = routineController.getRoutine(routineMap.get(routineNumberToAdd));
+						customerController.assignRoutine(routineToAdd, c);
+						System.out.println("The Routine has Successfully been assigned to the Customer.");
+					} else if (routineNumberToAdd == index) {
+						return;
+					}
+					break;
+				case 2:
+					if (c.getRoutines().isEmpty()) {
+						System.out.println("This Customer currently does not have any Routines assigned to them.");
+						break;
+					}
+					System.out.println("What Routine would you like to Remove from the Customer?");
+					Map<Integer, Routine> AllRoutinesMap = new HashMap<Integer, Routine>();
+					Set<Routine> customerRoutines = customerController.getCustomerRoutines(c);
+					System.out.println("Please select one of the following Routines to unassign from the current Customer:");
+					int indexCount = 1;
+					for (Routine rou : customerRoutines) {
+						System.out.println("[" + indexCount + "] " + rou.toString());
+						AllRoutinesMap.put(indexCount, rou);
+						indexCount++;
+					}
+					System.out.println("[" + indexCount + "] Return to Previous Screen");
+					int routineNumberToRemove = getIntSelection(1, indexCount);
+					if (routineNumberToRemove >= 1 && routineNumberToRemove < indexCount) {
+						Routine routineToRemove = routineController.getRoutine(AllRoutinesMap.get(routineNumberToRemove));
+						customerController.unassignRoutine(routineToRemove, c);
+						System.out.println("The Routine has Successfully been unassigned from the Customer.");
+					} else if (routineNumberToRemove == indexCount) {
+						return;
+					}
+					break;
+				case 3: return;
+			}
+		case 10: return;
 			}
 		}
 	}
@@ -636,6 +700,8 @@ public class CLI {
 					return;
 				}
 			}
+		} else if (answer == index) {
+			return;
 		}
 	}
 	
@@ -1101,13 +1167,12 @@ public class CLI {
 		routineController = new RoutineController();
 		workoutClassController = new WorkoutClassController();
 		
-		CLIHardCode.hardCodeTrainers();
-		CLIHardCode.hardCodeCustomers();
 		CLIHardCode.hardCodeEquipment();
 		CLIHardCode.hardCodeExercise();
-		CLIHardCode.hardCodeWorkoutClass();
 		CLIHardCode.hardCodeRoutines();
-		
+		CLIHardCode.hardCodeTrainers();
+		CLIHardCode.hardCodeCustomers();
+		CLIHardCode.hardCodeWorkoutClass();
 		CLIHardCode.hardCodedUsers();
 		login();
 		

@@ -25,8 +25,6 @@ public class RoutineTest {
 	private Routine r1copy;
 	private Routine rNull;
 	private Routine r2;
-	private Routine r3;
-	private Routine r4;
 	
 	@BeforeEach
 	void setUp() throws Exception {
@@ -41,8 +39,6 @@ public class RoutineTest {
 		r1 = new Routine("Running Routine", durationExercise);
 		r1copy = new Routine("Running Routine", durationExercise);
 		r2 = new Routine("Legs Routine", equipmentAndDurationExercise);
-		r3 = new Routine("Lunges Routine", repExercise);
-		r4 = new Routine("Weight Lifting Routine", repAndEquipmentExercise);
 	}
 
 	@Test

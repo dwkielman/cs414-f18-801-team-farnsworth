@@ -2,12 +2,14 @@ package teamFarnsworth.Domain.Users;
 
 import java.util.*;
 
+import teamFarnsworth.Domain.Entities.Routine;
 import teamFarnsworth.Domain.Entities.WorkoutClass;
 
 public class Customer extends Person {
 
 	private Membership membership;
 	private Set<WorkoutClass> workoutClasses = new HashSet<WorkoutClass>();
+	private Set<Routine> routines = new HashSet<Routine>();
 	private Trainer privateTrainer;
 	
 	public Customer() {}
@@ -61,7 +63,6 @@ public class Customer extends Person {
 			}
 		}
 		return classes;
-		
 	}
 	
 	public void enrollWithTrainer(Trainer t) {
@@ -77,6 +78,29 @@ public class Customer extends Person {
 	
 	public Trainer getPrivateTrainer() {
 		return privateTrainer;
+	}
+	
+	public Set<Routine> getRoutines() {
+		return routines;
+	}
+	
+	public void addRoutine(Routine r) {
+		routines.add(r);
+	}
+	
+	public void removeRoutine(Routine r) {
+		routines.remove(r);
+	}
+	
+	public String routinesToString() {
+		String routineString = "";
+		
+		if (!routines.isEmpty()) {
+			for (Routine rou : routines) {
+				routineString += rou.toString();
+			}
+		}
+		return routineString;
 	}
 	
 	@Override
